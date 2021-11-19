@@ -27,19 +27,19 @@ namespace Utils {
             }
         }
 
-        /// <summary> enum -> Dictionary<name, desc> </summary>
-        public static Dictionary<string, string> getNameDic<T>(bool ignoreNone = true) {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+        /// <summary> 檢核名稱 </summary>
+        public static bool checkName<T>(string item) {
+            List<string> names = new List<string>();
             var type = typeof(T);
             if (type.IsEnum) {
                 foreach (var value in Enum.GetValues(type).Cast<Enum>()) {
                     if (value.ToString().Equals("NONE", StringComparison.OrdinalIgnoreCase)) {
                         continue;
                     }
-                    result.Add(value.ToString(), ExtensionHelper.GetEnumDescription(value));
+                    names.Add(value.ToString());
                 }
             }
-            return result;
+            return names.Contains(item);
         }
 
         /// <summary> enum -> Dictionary<value, desc> </summary>

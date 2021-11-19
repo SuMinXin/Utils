@@ -15,15 +15,17 @@ namespace Utils {
     }
 
     public class MongoLogger : IMongoLogger {
-        private MongoHelper mongodb = new MongoHelper(UtilsMongo.url, UtilsMongo.DataBase.Logger);
+        private MongoHelper mongodb { get; set; }
         private BaseLog logger { get; set; }
-        public MongoLogger(string action, string user = "") {
-            logger = new BaseLog() {
-            action = action,
-            user = user
-            };
+        public MongoLogger(MongoHelper mongodb, string action = "") {
+            this.mongodb = mongodb;
+            logger = new BaseLog() { action = action };
         }
-        public void setKey(string logKey) {
+        public void setAction(string action) {
+            logger.action = action;
+        }
+        public void setKey(string action, string logKey) {
+            logger.action = action;
             logger.key = logKey;
         }
         public void setStatus(LogStatus status, string value = "") {
@@ -40,7 +42,7 @@ namespace Utils {
             mongodb.Insert(collection, logger, true);
         }
         #region -Simple Log-
-        public void logException(Exception ex) {
+        public void logException(string action, Exception ex) {
             logger.status = LogStatus.Exception.ToString();
             logger.message = string.Format("【{0}】 {1}", ex.Message, ex.ToString());
             mongodb.Insert(MongoCollection.Exception, logger, true);
@@ -50,9 +52,12 @@ namespace Utils {
                 Header = optionHeader,
                 RS = response
             };
-            setKey(url);
+            setKey("SystemPayload", url);
             setStatus(LogStatus.Message, GZip.compress(JsonSerializer.Serialize(log)));
             insert(MongoCollection.Payloads);
+        }
+        public void logPayload(PayloadLog log) {
+            mongodb.Insert(MongoCollection.TransactionLogs, log, true);
         }
         #endregion
     }
@@ -79,5 +84,12 @@ namespace Utils {
         public LogEvent(string message) {
             this.message = message;
         }
+    }
+    public class PayloadLog {
+        public string authorization { get; set; }
+        public string controller { get; set; }
+        public string request { get; set; }
+        public string response { get; set; }
+        public DateTime systemTime { get; set; }
     }
 }

@@ -81,7 +81,7 @@ namespace Utils {
                     result = await task;
                 }
             } catch (Exception ex) {
-                logger.logException(ex);
+                logger.logException("UploadFirebase", ex);
             }
             return result;
         }

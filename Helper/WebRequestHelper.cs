@@ -40,7 +40,7 @@ namespace Utils {
                     }
                     return FormApi(para);
                 default:
-                    logger.logException(new Exception($"HttpMethod: {method} does not exist."));
+                    logger.logException("sendPayload", new Exception($"HttpMethod: {method} does not exist."));
                     return string.Empty;
             }
         }
@@ -51,7 +51,7 @@ namespace Utils {
                 HttpWebRequest request = defaultHttp(para);
                 return send(request);
             } catch (Exception ex) {
-                logger.logException(ex);
+                logger.logException("GetApi", ex);
             }
             return string.Empty;
         }
@@ -65,7 +65,7 @@ namespace Utils {
                 }
                 return send(request);
             } catch (Exception ex) {
-                logger.logException(ex);
+                logger.logException("FormApi", ex);
             }
             return string.Empty;
         }
@@ -100,7 +100,7 @@ namespace Utils {
                     /// discard response
                 }
             } catch (Exception ex) {
-                logger.logException(ex);
+                logger.logException("WithoutResponse", ex);
             }
         }
 

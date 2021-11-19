@@ -19,13 +19,10 @@ namespace Utils {
             public EnumSortType SortType { get; set; }
         }
 
-        private IMongoClient _client;
         private IMongoDatabase _database;
 
-        public MongoHelper(string connectionString, string database) {
-            _client = new MongoClient(Decrypt.get(connectionString));
-            string db = MongoUrl.Create(string.Format(Decrypt.get(connectionString), Decrypt.get(database))).DatabaseName;
-            _database = _client.GetDatabase(db);
+        public void setDatebase(IMongoDatabase database) {
+            this._database = database;
         }
 
         #region Methods
@@ -96,11 +93,11 @@ namespace Utils {
             return collection.Find(pDoc.ToBsonDocument()).FirstOrDefault() != null;
         }
         /// <summary> Update Doc </summary>
-        public void UpdateOne<T>(MongoCollection mCollection, FilterDefinition<T> filter, UpdateDefinition<T> update) {
-            IMongoCollection<T> collection = _database.GetCollection<T>(connectionName(mCollection));
+        public void UpdateOne<T>(MongoCollection mCollection, FilterDefinition<T> filter, UpdateDefinition<T> update, string suffix = "") {
+            string collectionName = string.Concat(connectionName(mCollection), suffix);
+            IMongoCollection<T> collection = _database.GetCollection<T>(collectionName);
             collection.UpdateOne(filter, update);
         }
-
         /// <summary> Update Doc </summary>
         public void UpdateAll<T>(MongoCollection mCollection, FilterDefinition<T> filter, UpdateDefinition<T> update, string suffix = "") {
             string collectionName = string.Concat(connectionName(mCollection), suffix);

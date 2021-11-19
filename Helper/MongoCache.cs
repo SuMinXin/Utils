@@ -7,9 +7,10 @@ using Utils.Setting;
 
 namespace Utils {
     public class CacheHelper : IMongoCache {
-        private MongoHelper mongodb = new MongoHelper(UtilsMongo.url, UtilsMongo.DataBase.Cache);
+        private MongoHelper mongodb { get; set; }
         private MongoCollection collection { get; set; }
-        public CacheHelper(MongoCollection collection) {
+        public CacheHelper(MongoHelper mongodb, MongoCollection collection) {
+            this.mongodb = mongodb;
             this.collection = collection;
             mongodb.AddTTL(collection);
         }
